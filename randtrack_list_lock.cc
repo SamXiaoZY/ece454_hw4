@@ -58,9 +58,6 @@ unsigned samples_to_skip;
 // the element and key value here: element is "class sample" and
 // key value is "unsigned".  
 hash<sample,unsigned> h;
-
-// Global mutex lock
-pthread_mutex_t global_lock = PTHREAD_MUTEX_INITIALIZER;
 // *******Global Variables*******
 
 
@@ -132,8 +129,6 @@ void *process(void *void_args) {
 
       // force the sample to be within the range of 0..RAND_NUM_UPPER_BOUND-1
       key = rnum % RAND_NUM_UPPER_BOUND;
-      // Lock on critical section of reading and writing to hash
-      pthread_mutex_lock(&global_lock);
 
       // if this sample has not been counted before
       if (!(s = h.lookup(key))){
@@ -144,10 +139,9 @@ void *process(void *void_args) {
       }
 
       // increment the count for the sample
+      h.lock_list(key);
       s->count++;
-
-      // Unock on critical section
-      pthread_mutex_unlock(&global_lock);
+      h.unlock_list(key);
     }
   }
 

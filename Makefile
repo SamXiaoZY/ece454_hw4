@@ -2,7 +2,7 @@
 CC = g++-4.9
 CFLAGS = -O3
 
-all: randtrack randtrack_global_lock randtrack_tm
+all: randtrack randtrack_global_lock randtrack_tm randtrack_list_lock
 
 randtrack: list.h hash.h defs.h randtrack.cc
 	$(CC) $(CFLAGS) -lpthread randtrack.cc -o randtrack
